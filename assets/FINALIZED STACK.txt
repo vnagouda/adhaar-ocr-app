@@ -1,0 +1,127 @@
+FINALIZED STACK
+🧠 n8n: Main automation engine
+
+📲 WhatsApp (Twilio / Gupshup): Communication
+
+🔎 OCR: Aadhaar data extraction (Tesseract / Google Vision API)
+
+💰 Razorpay: Payment collection
+
+📚 Zoho CRM: Data storage & policy tracking
+
+🧾 Zoho Books: Accounting sync (future)
+
+📤 Email / Drive / Sompo API: Export to insurance
+
+AUTOMATION PLAN USING n8n
+🚀 PHASE 1 – MVP LAUNCH (Aadhaar → CRM + Payment)
+Goal: From Aadhaar image → Extract → Minimal info → CRM Lead → Send payment link
+
+✅ Work Items:
+Webhook Trigger Node
+
+Receives image via WhatsApp or form upload
+
+OCR Node (Tesseract / Google Vision API)
+
+Extract Name, DOB, Gender, Aadhaar Number
+
+Function Node: Validate & Clean Data
+
+Format DOB, ensure UID is 12 digits, fix common OCR errors
+
+Decision Node
+
+If required fields found → continue
+
+Else → send WhatsApp follow-up asking for nominee name/family type
+
+Razorpay API Node
+
+Create payment link for membership
+
+Save status (Pending)
+
+WhatsApp Node (via Twilio / Gupshup)
+
+Send summary + payment link + request for confirmation
+
+Zoho CRM API Node
+
+Create contact / lead with extracted + confirmed data
+
+⚙️ PHASE 2 – Membership → Policy Plan Assignment
+Goal: Automatically assign policy based on eligibility and generate invoice
+
+✅ Work Items:
+Cron Trigger Node
+
+Run daily to scan Zoho CRM for 75+ day old members with no policy
+
+Zoho CRM API Node
+
+Fetch contacts by filter
+
+Function Node
+
+Decide plan type: (1 Adult, 2 Adults, etc.) based on stored data
+
+Zoho Subscriptions/Billing API Node
+
+Assign policy plan
+
+Generate invoice (with premium + share capital + commission)
+
+WhatsApp Node
+
+Send invoice + payment link via WhatsApp
+
+Razorpay Webhook Trigger
+
+Listen for premium payment success
+
+Update CRM with status
+
+🛡️ PHASE 3 – Export to Insurer + Policy Issuance
+Goal: Automate export to Universal Sompo & update issuance status
+
+✅ Work Items:
+Cron Trigger Node
+
+Daily check: has paid, 85+ days, not exported
+
+Zoho CRM API Node
+
+Fetch eligible users
+
+Function Node
+
+Format as per Sompo’s required Excel schema
+
+Google Drive/Email Node
+
+Save/export the file OR auto-email to Sompo team
+
+Manual Upload Trigger (Optional)
+
+Upload insurer's response (CSV with status)
+
+Parse CSV + Update CRM Node
+
+Set Policy Status, Issue Date in Zoho CRM
+
+📚 PHASE 4 – Zoho Books Integration (Optional)
+Goal: Reconcile payments, commissions, share capital into accounting
+
+✅ Work Items:
+Razorpay → Zoho Books API Node
+
+For each payment, create corresponding journal entries
+
+Zoho CRM → Zoho Books Sync
+
+Match members, map commissions
+
+Dashboard Webhook (Optional)
+
+Admin panel to view accounting logs
